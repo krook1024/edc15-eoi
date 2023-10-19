@@ -91,4 +91,4 @@ class Map:
         X = np.array(self.x).reshape(len(self.x), 1)
         Y = np.array(self.y)
         Z = np.array(self.lines)
-        ax.plot_surface(X, Y, Z, cmap=cm.RdYlGn)
+        ax.plot_surface(X, Y, Z, cmap=cm.magma)

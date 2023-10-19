@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 from pandas import DataFrame as df
-
+import argparse
 
 def select_duration_at(soi):
     for i in range(len(selector.x)):
@@ -37,7 +37,23 @@ def get_actual_duration(soi):
     return (actual_duration_lines, duration_n_lines)
 
 
+def get_eoi(soi, actual_duration):
+    eoi_lines = (
+        (np.array(soi.lines) - np.array(actual_duration.lines))
+        .reshape(len(soi.x), len(soi.y))
+        .tolist()
+    )
+    return Map(x=soi.x, y=soi.y, lines=eoi_lines)
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        prog="edc15-eoi",
+        description="calculates the time of the end of injection event for diesel engines",
+    )
+    parser.add_argument('-p', '--plot', action='store_true')
+    args = parser.parse_args()
+
     fig, axs = plt.subplots(3, 3, subplot_kw={"projection": "3d"})
     axs = axs.flatten().tolist()
 
@@ -64,29 +80,26 @@ if __name__ == "__main__":
     actual_duration_lines, duration_n_lines = get_actual_duration(soi)
     actual_duration = Map(x=soi.x, y=soi.y, lines=actual_duration_lines)
     duration_n = Map(x=soi.x, y=soi.y, lines=duration_n_lines)
-    eoi_lines = (
-        np.array(soi.lines)
-        - np.array(actual_duration.lines).reshape(len(soi.x), len(soi.y)).tolist()
-    )
-    eoi = Map(x=soi.x, y=soi.y, lines=eoi_lines)
 
     print("ACTUAL DURATION")
     print(actual_duration)
+    actual_duration.show_graph(axs[7])
+    axs[7].set_title("ACTUAL DURATION")
     print()
 
-    print("SELECTED DURATION MAP")
-    print(duration_n)
-    print()
+    # print("SELECTED DURATION MAP")
+    # print(duration_n)
+    # print()
+
+    eoi = get_eoi(soi, actual_duration)
 
     print("EOI")
     print(eoi)
-    print()
-
-    actual_duration.show_graph(axs[7])
     eoi.show_graph(axs[8])
-    axs[7].set_title("ACTUAL DURATION")
     axs[8].set_title("EOI")
+    print()
 
     plt.tight_layout()
     plt.subplots_adjust(left=0, right=1, bottom=0, top=0.96, wspace=0, hspace=0)
-    plt.show()
+    if args.plot:
+        plt.show()
