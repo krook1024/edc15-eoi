@@ -68,9 +68,9 @@ if __name__ == "__main__":
     print()
 
     for i in range(len(durations)):
-        # print(f'DURATION {i}')
-        # print(durations[i])
-        # print()
+        print(f'DURATION {i}')
+        print(durations[i])
+        print()
         axs[i + 1].set_title(f"DURATION {i}")
         durations[i].show_graph(axs[i + 1])
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
     print("EOI")
     print(eoi)
-    eoi.show_graph(axs[8])
+    eoi.show_graph(axs[8], plt.get_cmap('magma').reversed())
     axs[8].set_title("EOI")
     print()
 

@@ -87,8 +87,8 @@ class Map:
 
         return interp((y, x)).item()
 
-    def show_graph(self, ax):
+    def show_graph(self, ax, cmap=None):
         X = np.array(self.x).reshape(len(self.x), 1)
         Y = np.array(self.y)
         Z = np.array(self.lines)
-        ax.plot_surface(X, Y, Z, cmap=cm.magma)
+        ax.plot_surface(X, Y, Z, cmap=cm.magma if cmap is None else cmap)

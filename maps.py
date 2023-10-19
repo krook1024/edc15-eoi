@@ -24,7 +24,7 @@ with open("CURRENT.bin", mode="rb") as bin:
     )
 
     durations = [
-        Map(
+        Map( #00
             file=bin,
             config={
                 "start": 0x7946A,
@@ -35,10 +35,10 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map(
+        Map( #01
             file=bin,
             config={
-                "start": 0x7957E,
+                "start": 0x79578,
                 "fun": lambda x: x * 0.023437,
                 "x": 0x79536,
                 "x_fun": lambda x: x * 0.01,
@@ -46,10 +46,10 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map(
+        Map( #02
             file=bin,
             config={
-                "start": 0x79804,
+                "start": 0x797FE,
                 "fun": lambda x: x * 0.023437,
                 "x": 0x797BC,
                 "x_fun": lambda x: x * 0.01,
@@ -57,10 +57,10 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map(
+        Map( #03
             file=bin,
             config={
-                "start": 0x79A8A,
+                "start": 0x79A84,
                 "fun": lambda x: x * 0.023437,
                 "x": 0x79A42,
                 "x_fun": lambda x: x * 0.01,
@@ -68,10 +68,10 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map(
+        Map( #04
             file=bin,
             config={
-                "start": 0x79D10,
+                "start": 0x79D0A,
                 "fun": lambda x: x * 0.023437,
                 "x": 0x79CC8,
                 "x_fun": lambda x: x * 0.01,
@@ -79,7 +79,7 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map(
+        Map( #05
             file=bin,
             config={
                 "start": 0x79F78,
