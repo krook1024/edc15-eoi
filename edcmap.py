@@ -1,4 +1,6 @@
 from struct import pack, unpack
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib import cm
@@ -32,7 +34,7 @@ class RegularGridInterpolatorNNextrapol:
 class Map:
     def __init__(self, file=None, config=None, x=None, y=None, lines=None):
         if file is not None and config is not None:
-            self.file = file
+            self.file = open(file, "rb")
 
             self.start = config["start"]
             self.fun = config["fun"]
@@ -60,6 +62,10 @@ class Map:
             self.y = y
             self.lines = lines
 
+    def __del__(self):
+        if hasattr(self, "file"):
+            self.file.close()
+
     def load_axis(self, start, fun):
         self.file.seek(start - 2)
         size = unp(self.file.read(2))
@@ -81,33 +87,32 @@ class Map:
                 line.append(self.fun(unp(self.file.read(2))))
             self.lines.append(line)
 
+    def write_axis(self, file, start, values, inv_fn):
+        file.seek(start)
+        for val in values:
+            val = int(round(inv_fn(val)))
+            file.write(p(val))
+
     def write_to_file(self):
-        self.file.seek(self.x_start)
-        for xval in self.x:
-            val = int(round(self.x_fun_inv(xval)))
-            self.file.write(p(val))
+        with open(self.file.name, "rb+") as file:
+            self.write_axis(file, self.x_start, self.x, self.x_fun_inv)
+            self.write_axis(file, self.y_start, self.y, self.y_fun_inv)
 
-        self.file.seek(self.y_start)
-        for yval in self.y:
-            val = int(round(self.y_fun_inv(yval)))
-            self.file.write(p(val))
-
-        self.file.seek(self.start)
-        for i in range(0, len(self.x)):
-            for j in range(0, len(self.y)):
-                val = int(round(self.inv(self.lines[i][j])))
-                self.file.write(p(val))
+            file.seek(self.start)
+            for i in range(0, len(self.x)):
+                for j in range(0, len(self.y)):
+                    val = int(round(self.inv(self.lines[i][j])))
+                    file.write(p(val))
 
     def np(self):
         return np.array(self.lines).reshape(len(self.x), len(self.y))
 
     def __str__(self):
         if hasattr(self, "y"):
-            Y = np.array(self.y)
-            Z = np.array(self.lines)
-            df = pd.DataFrame(Z, columns=Y, index=self.x)
+            df = pd.DataFrame(self.np(), columns=np.array(self.y), index=self.x)
         else:
             df = pd.DataFrame(self.lines, index=self.x)
+
         return str(df)
 
     def at(self, x, y):
@@ -120,7 +125,11 @@ class Map:
         return interp((y, x)).item()
 
     def show_graph(self, ax, cmap=None):
-        X = np.array(self.x).reshape(len(self.x), 1)
-        Y = np.array(self.y)
-        Z = self.np()
-        ax.plot_surface(X, Y, Z, cmap=cm.magma if cmap is None else cmap)
+        ax.plot_surface(
+            np.array(self.x).reshape(len(self.x), 1),
+            np.array(self.y),
+            self.np(),
+            cmap=plt.get_cmap("RdYlGn").reversed() if cmap is None else cmap,
+            edgecolors="black",
+            linewidth=0.25,
+        )
