@@ -5,6 +5,7 @@ from edcmap import Map
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import argparse
 import copy
 
@@ -139,13 +140,15 @@ if __name__ == "__main__":
     print()
 
     print("NEW EOI")
-    actual_duration_new, _ = get_actual_duration(corrected_soi)
-    new_eoi = get_eoi(corrected_soi, Map(x=soi.x, y=soi.y, lines=actual_duration_new))
+    new_actual_duration_lines, _ = get_actual_duration(corrected_soi)
+    new_eoi = get_eoi(
+        corrected_soi, Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines)
+    )
     print(new_eoi)
     print()
 
     print("NEW ACTUAL DURATION")
-    print(Map(x=soi.x, y=soi.y, lines=actual_duration_new))
+    print(Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines))
     print()
 
     print(
@@ -153,5 +156,13 @@ if __name__ == "__main__":
         "also floating point calculations)"
     )
     lines = new_eoi.np() - target_eoi.np()
+    print(Map(x=soi.x, y=soi.y, lines=lines))
+    print()
+
+    print(
+        "ERROR IN ACTUAL DURATION EOI CALCULATIONS (mainly due to different selector being selected after changing soi,"
+        "also floating point calculations)"
+    )
+    lines = np.array(new_actual_duration_lines) - actual_duration.np()
     print(Map(x=soi.x, y=soi.y, lines=lines))
     print()
