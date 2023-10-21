@@ -149,8 +149,9 @@ if __name__ == "__main__":
     print()
 
     print(
-        "ERROR (mainly due to different selector being selected after changing soi, also floating point calculations)"
+        "ERROR DURING EOI CALCULATIONS (mainly due to different selector being selected after changing soi, "
+        "also floating point calculations)"
     )
-    lines = new_eoi.np() - eoi.np()
+    lines = new_eoi.np() - target_eoi.np()
     print(Map(x=soi.x, y=soi.y, lines=lines))
     print()
