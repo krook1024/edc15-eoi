@@ -24,7 +24,7 @@ with open("CURRENT.bin", mode="rb") as bin:
     )
 
     durations = [
-        Map( #00
+        Map(  # 00
             file=bin,
             config={
                 "start": 0x7946A,
@@ -35,7 +35,7 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map( #01
+        Map(  # 01
             file=bin,
             config={
                 "start": 0x79578,
@@ -46,7 +46,7 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map( #02
+        Map(  # 02
             file=bin,
             config={
                 "start": 0x797FE,
@@ -57,7 +57,7 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map( #03
+        Map(  # 03
             file=bin,
             config={
                 "start": 0x79A84,
@@ -68,7 +68,7 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map( #04
+        Map(  # 04
             file=bin,
             config={
                 "start": 0x79D0A,
@@ -79,7 +79,7 @@ with open("CURRENT.bin", mode="rb") as bin:
                 "y_fun": lambda x: x,
             },
         ),
-        Map( #05
+        Map(  # 05
             file=bin,
             config={
                 "start": 0x79F78,

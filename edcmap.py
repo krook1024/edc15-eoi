@@ -1,4 +1,4 @@
-from struct import unpack
+from struct import pack, unpack
 import numpy as np
 import pandas as pd
 from matplotlib import cm
@@ -7,6 +7,10 @@ from scipy.interpolate import RegularGridInterpolator
 
 def unp(byte):
     return unpack("<h", byte)[0]
+
+
+def p(byte):
+    return pack("<h", byte)
 
 
 class RegularGridInterpolatorNNextrapol:
@@ -40,6 +44,15 @@ class Map:
                 self.y_start = config["y"]
                 self.y_fun = config["y_fun"]
 
+            if "inv" in config:
+                self.inv = config["inv"]
+
+            if "x_fun_inv" in config:
+                self.x_fun_inv = config["x_fun_inv"]
+
+            if "y_fun_inv" in config:
+                self.y_fun_inv = config["y_fun_inv"]
+
             self.load()
 
         if x is not None and y is not None and lines is not None:
@@ -68,9 +81,28 @@ class Map:
                 line.append(self.fun(unp(self.file.read(2))))
             self.lines.append(line)
 
+    def write_to_file(self):
+        self.file.seek(self.x_start)
+        for xval in self.x:
+            val = int(round(self.x_fun_inv(xval)))
+            self.file.write(p(val))
+
+        self.file.seek(self.y_start)
+        for yval in self.y:
+            val = int(round(self.y_fun_inv(yval)))
+            self.file.write(p(val))
+
+        self.file.seek(self.start)
+        for i in range(0, len(self.x)):
+            for j in range(0, len(self.y)):
+                val = int(round(self.inv(self.lines[i][j])))
+                self.file.write(p(val))
+
+    def np(self):
+        return np.array(self.lines).reshape(len(self.x), len(self.y))
+
     def __str__(self):
         if hasattr(self, "y"):
-            X = np.array(self.x).reshape(len(self.x), 1)
             Y = np.array(self.y)
             Z = np.array(self.lines)
             df = pd.DataFrame(Z, columns=Y, index=self.x)
@@ -81,7 +113,7 @@ class Map:
     def at(self, x, y):
         X = np.array(self.x).flatten()
         Y = np.array(self.y).flatten()
-        Z = np.array(self.lines).reshape(len(self.x), len(self.y))
+        Z = self.np()
 
         interp = RegularGridInterpolatorNNextrapol((X, Y), Z)
 
@@ -90,5 +122,5 @@ class Map:
     def show_graph(self, ax, cmap=None):
         X = np.array(self.x).reshape(len(self.x), 1)
         Y = np.array(self.y)
-        Z = np.array(self.lines)
+        Z = self.np()
         ax.plot_surface(X, Y, Z, cmap=cm.magma if cmap is None else cmap)
