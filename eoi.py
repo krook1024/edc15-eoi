@@ -132,51 +132,53 @@ if __name__ == "__main__":
         y=eoi.y,
     )
 
-    if args.init:
+    if args.init or args.write:
         target_eoi.lines = eoi.lines
         target_eoi.write_to_file()
 
-    print("TARGET EOI")
-    print(target_eoi)
-    print()
-
-    corrected_soi_lines = soi.np() + (target_eoi.np() - eoi.np())
-    corrected_soi = Map(x=soi.x, y=soi.y, lines=corrected_soi_lines.tolist())
     if args.write:
-        soi.lines = corrected_soi.lines
-        soi.write_to_file()
+        print("TARGET EOI")
+        print(target_eoi)
+        print()
 
-    print("NEW SOI")
-    print(corrected_soi)
-    print()
+        corrected_soi_lines = soi.np() + (target_eoi.np() - eoi.np())
+        corrected_soi = Map(x=soi.x, y=soi.y, lines=corrected_soi_lines.tolist())
+        if args.write:
+            soi.lines = corrected_soi.lines
+            soi.write_to_file()
 
-    print("NEW EOI")
-    new_actual_duration_lines, _ = get_actual_duration(corrected_soi)
-    new_eoi = get_eoi(
-        corrected_soi, Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines)
-    )
-    print(new_eoi)
-    print()
+        print("NEW SOI")
+        print(corrected_soi)
+        print()
 
-    print("NEW ACTUAL DURATION")
-    print(Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines))
-    print()
+        print("NEW EOI")
+        new_actual_duration_lines, _ = get_actual_duration(corrected_soi)
+        new_eoi = get_eoi(
+            corrected_soi, Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines)
+        )
+        print(new_eoi)
+        print()
 
-    print(
-        "ERROR DURING EOI CALCULATIONS (mainly due to different selector being selected after changing soi, "
-        "also floating point calculations)"
-    )
-    lines = new_eoi.np() - target_eoi.np()
-    print(Map(x=soi.x, y=soi.y, lines=lines))
-    print()
+    if args.print_all:
+        print("NEW ACTUAL DURATION")
+        print(Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines))
+        print()
 
-    print(
-        "ERROR IN ACTUAL DURATION EOI CALCULATIONS (mainly due to different selector being selected after "
-        "changing soi, also floating point calculations)"
-    )
-    lines = np.array(new_actual_duration_lines) - actual_duration.np()
-    print(Map(x=soi.x, y=soi.y, lines=lines))
-    print()
+        print(
+            "ERROR DURING EOI CALCULATIONS (mainly due to different selector being selected after changing soi, "
+            "also floating point calculations)"
+        )
+        lines = new_eoi.np() - target_eoi.np()
+        print(Map(x=soi.x, y=soi.y, lines=lines))
+        print()
+
+        print(
+            "ERROR IN ACTUAL DURATION EOI CALCULATIONS (mainly due to different selector being selected after "
+            "changing soi, also floating point calculations)"
+        )
+        lines = np.array(new_actual_duration_lines) - actual_duration.np()
+        print(Map(x=soi.x, y=soi.y, lines=lines))
+        print()
 
     if args.plot:
         for i in range(1, len(axs) - 1):
