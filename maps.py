@@ -23,7 +23,7 @@ selector = Map(
         "start": 0x7A1F6,
         "fun": lambda x: round(x / 256, 0),
         "x": 0x7A1EA,
-        "x_fun": lambda x: x * -0.023437 + 78,
+        "x_fun": lambda x: round(x * -0.023437 + 78),
     },
 )
 

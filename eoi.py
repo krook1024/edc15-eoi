@@ -12,11 +12,17 @@ pd.options.display.float_format = "{:,.2f}".format
 
 
 def select_duration_at(current_soi):
-    for i in range(len(selector.x)):
-        if selector.x[i] <= current_soi:
-            return i
+    line = np.array(selector.lines).flatten().tolist()
 
-    return len(selector.x) - 1
+    if current_soi > selector.x[0]:
+        return int(line[0]), int(line[0])
+
+    if current_soi < selector.x[-1]:
+        return int(line[-1]), int(line[-1])
+
+    for i in range(1, len(selector.x)):
+        if current_soi > selector.x[i]:
+            return int(line[i - 1]), int(line[i])
 
 
 def get_actual_duration(soi_map):
@@ -30,10 +36,14 @@ def get_actual_duration(soi_map):
         for j in range(len(soi_map.y)):
             curr_iq = soi_map.y[j]
             curr_soi = soi_map.lines[i][j]
-            dura_index = select_duration_at(curr_soi)
+            one_dura_index, other_dura_index = select_duration_at(curr_soi)
+            curr_dura = (
+                durations[one_dura_index].at(curr_rpm, curr_iq)
+                + durations[other_dura_index].at(curr_rpm, curr_iq)
+            ) / 2
 
-            actual_duration_line.append(durations[dura_index].at(curr_rpm, curr_iq))
-            duration_n_line.append(dura_index)
+            actual_duration_line.append(curr_dura)
+            duration_n_line.append(one_dura_index)
 
         duration_lines.append(actual_duration_line)
         n_lines.append(duration_n_line)
@@ -132,7 +142,7 @@ if __name__ == "__main__":
         y=eoi.y,
     )
 
-    if args.init or args.write:
+    if args.init:
         target_eoi.lines = eoi.lines
         target_eoi.write_to_file()
 

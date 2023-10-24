@@ -95,8 +95,8 @@ class Map:
 
     def write_to_file(self):
         with open(self.file.name, "rb+") as file:
-            self.write_axis(file, self.x_start, self.x, self.x_fun_inv)
-            self.write_axis(file, self.y_start, self.y, self.y_fun_inv)
+            # self.write_axis(file, self.x_start, self.x, self.x_fun_inv)
+            # self.write_axis(file, self.y_start, self.y, self.y_fun_inv)
 
             file.seek(self.start)
             for i in range(0, len(self.x)):
