@@ -81,9 +81,18 @@ def get_args():
 
 
 if __name__ == "__main__":
-    fig, axs = plt.subplots(3, 3, subplot_kw={"projection": "3d"})
-    axs = axs.flatten().tolist()
     args = get_args()
+
+    if args.print_all:
+        nrows = 3
+        ncols = 3
+    else:
+        nrows = 1
+        ncols = 3
+
+    fig, axs = plt.subplots(nrows, ncols, subplot_kw={"projection": "3d"})
+    axs = axs.flatten().tolist()
+    axc = 0
 
     print("SELECTOR")
     print(selector)
@@ -99,8 +108,9 @@ if __name__ == "__main__":
 
     print("SOI (positive means BTDC)")
     print(soi)
-    soi.show_graph(axs[0])
+    soi.show_graph(axs[axc])
     axs[0].set_title("SOI")
+    axc += 1
     print()
 
     for i in range(len(durations)):
@@ -108,21 +118,24 @@ if __name__ == "__main__":
             print(f"DURATION {i}")
             print(durations[i])
             print()
-        axs[i + 1].set_title(f"DURATION {i}")
-        durations[i].show_graph(axs[i + 1])
+            axs[axc].set_title(f"DURATION {i}")
+            durations[i].show_graph(axs[i + 1])
+            axc += 1
 
     print("ACTUAL DURATION")
     print(actual_duration)
-    actual_duration.show_graph(axs[7])
-    axs[7].set_title("ACTUAL DURATION")
+    actual_duration.show_graph(axs[axc])
+    axs[axc].set_title("ACTUAL DURATION")
+    axc += 1
     print()
 
     eoi = get_eoi(soi, actual_duration)
 
     print("EOI (positive means BTDC)")
     print(eoi)
-    eoi.show_graph(axs[8], plt.get_cmap("RdYlGn"))
-    axs[8].set_title("EOI")
+    eoi.show_graph(axs[axc], plt.get_cmap("RdYlGn"))
+    axs[axc].set_title("EOI")
+    axc += 1
     print()
 
     target_eoi = Map(
