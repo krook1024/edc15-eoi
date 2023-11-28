@@ -2,7 +2,8 @@
 
 from edcmap import Map
 from maps import soi
-from termcolor import colored
+import pandas as pd
+import colorama
 
 filename = "CURRENT.bin"
 
@@ -61,6 +62,23 @@ for temp in soi_water_temp_correction_factor.x:
             corrected_soi = curr_soi + (soi_water_temp_correction_factor.at(curr_iq, temp) * soi_water_temp_correction.at(curr_iq, curr_rpm))
             line.append(round(corrected_soi, 2))
         lines.append(line)
+
     map = Map(x=soi.x, y=soi.y, lines=lines)
-    print(colored(map, 'red'))
-    print()
+
+    def color_values(val):
+        color = None
+        if val <= 9:
+            color = colorama.Fore.GREEN
+        elif val <= 14:
+            color = colorama.Fore.YELLOW
+        elif val <= 20:
+            color = colorama.Fore.MAGENTA
+        else:
+            color = colorama.Fore.RED
+
+        return f'{color}{val}{colorama.Style.RESET_ALL}'
+    
+    colorama.init()
+    colored_df = map.df().map(color_values)
+    colorama.deinit()
+    print(colored_df.to_string())
