@@ -107,13 +107,16 @@ class Map:
     def np(self):
         return np.array(self.lines).reshape(len(self.x), len(self.y))
 
-    def __str__(self):
+    def df(self):
         if hasattr(self, "y"):
             df = pd.DataFrame(self.np(), columns=np.array(self.y), index=self.x)
         else:
             df = pd.DataFrame(self.lines, index=self.x)
 
-        return str(df)
+        return df
+
+    def __str__(self):
+        return str(self.df())
 
     def at(self, x, y):
         X = np.array(self.x).flatten()

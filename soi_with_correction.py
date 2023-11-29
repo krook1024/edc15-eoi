@@ -2,8 +2,9 @@
 
 from edcmap import Map
 from maps import soi
-import pandas as pd
-import colorama
+import pandas as pd 
+
+pd.options.display.float_format = "{:,.2f}".format
 
 filename = "CURRENT.bin"
 
@@ -11,7 +12,7 @@ soi_water_temp_correction_factor = Map(
     file=filename,
     config={
         "start": 0x7891A,
-        "fun": lambda x: x * 0.0001,
+        "fun": lambda x: round(x * 0.0001, 1),
         "inv": lambda x: x * 10000,
 
         "x": 0x788f2,
@@ -32,8 +33,8 @@ soi_water_temp_correction = Map(
     file=filename,
     config={
         "start": 0x78A34,
-        "fun": lambda x: round(x * -0.023437, 2),
-        "inv": lambda x: round(x / -0.023437, 0),
+        "fun": lambda x: x * -0.0234375,
+        "inv": lambda x: x / -0.0234375,
 
         "x": 0x78a08,
         "x_fun": lambda x: x,
@@ -64,21 +65,24 @@ for temp in soi_water_temp_correction_factor.x:
         lines.append(line)
 
     map = Map(x=soi.x, y=soi.y, lines=lines)
+    print(map)
+    print()
 
-    def color_values(val):
-        color = None
-        if val <= 9:
-            color = colorama.Fore.GREEN
-        elif val <= 14:
-            color = colorama.Fore.YELLOW
-        elif val <= 20:
-            color = colorama.Fore.MAGENTA
-        else:
-            color = colorama.Fore.RED
+print("SUGGESTED SOI CORRECTION MAP FOR 10 *BTDC ADVANCE AT 100%")
 
-        return f'{color}{val}{colorama.Style.RESET_ALL}'
-    
-    colorama.init()
-    colored_df = map.df().map(color_values)
-    colorama.deinit()
-    print(colored_df.to_string())
+lines = []
+for i in range(len(soi_water_temp_correction.x)):
+    curr_rpm = soi_water_temp_correction.x[i]
+    line = []
+    for j in range(len(soi_water_temp_correction.y)):
+        curr_iq = soi_water_temp_correction.y[j]
+        target = 10
+        correction = max(0, round(target - soi.at(curr_iq, curr_rpm), 2))
+        line.append(correction)
+    lines.append(line)
+
+suggested_soi_corr = Map(x=soi_water_temp_correction.x, y=soi_water_temp_correction.y, lines=lines)
+print(suggested_soi_corr)
+
+#soi_water_temp_correction.lines = suggested_soi_corr.lines
+#soi_water_temp_correction.write_to_file()
