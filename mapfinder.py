@@ -1,88 +1,58 @@
 import sys
 import clr
 import os
-from mapsholder import Maps
 from edcmap import Map
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
+@dataclass
+class Maps:
+    soi: Map
+    selector: Map
+    durations: list[Map] = field(default_factory=list)
 
 @dataclass
 class Symbol:
-    BitMask: int
     CodeBlock: int
-    Correction: float
-    Currentdata: list[bytes]
     Flash_start_address: int
-    Internal_address: int
     Length: int
-    Offset: float
     Start_address: int
-    Symbol_number: int
-    Symbol_number_ECU: int
-    Symbol_type: int
     Varname: str
-    XaxisAssigned: bool
     XaxisUnits: str
     X_axis_address: int
-    X_axis_correction: float
     X_axis_descr: str
     X_axis_ID: int
     X_axis_length: int
-    X_axis_offset: float
     YaxisAssigned: bool
     YaxisUnits: str
     Y_axis_address: int
-    Y_axis_correction: float
     Y_axis_descr: str
     Y_axis_ID: int
     Y_axis_length: int
-    Y_axis_offset: float
     Z_axis_descr: str
     flash_start_address: int
-    internal_address: int
-    Is1D: bool
-    Is2D: bool
-    Is3D: bool
     length: int
 
 
 def to_symbol(symbolHelper) -> Symbol:
     return Symbol(
-        symbolHelper.BitMask,
         symbolHelper.CodeBlock,
-        symbolHelper.Correction,
-        symbolHelper.Currentdata,
         symbolHelper.Flash_start_address,
-        symbolHelper.Internal_address,
         symbolHelper.Length,
-        symbolHelper.Offset,
         symbolHelper.Start_address,
-        symbolHelper.Symbol_number,
-        symbolHelper.Symbol_number_ECU,
-        symbolHelper.Symbol_type,
         symbolHelper.Varname,
-        symbolHelper.XaxisAssigned,
         symbolHelper.XaxisUnits,
         symbolHelper.X_axis_address,
-        symbolHelper.X_axis_correction,
         symbolHelper.X_axis_descr,
         symbolHelper.X_axis_ID,
         symbolHelper.X_axis_length,
-        symbolHelper.X_axis_offset,
         symbolHelper.YaxisAssigned,
         symbolHelper.YaxisUnits,
         symbolHelper.Y_axis_address,
-        symbolHelper.Y_axis_correction,
         symbolHelper.Y_axis_descr,
         symbolHelper.Y_axis_ID,
         symbolHelper.Y_axis_length,
-        symbolHelper.Y_axis_offset,
         symbolHelper.Z_axis_descr,
         symbolHelper.Flash_start_address,
-        symbolHelper.Internal_address,
-        symbolHelper.Is1D,
-        symbolHelper.Is2D,
-        symbolHelper.Is3D,
         symbolHelper.Length,
     )
 
@@ -120,6 +90,7 @@ def get_soi(symbols: list[Symbol], filename: str) -> Map:
     symbol = sorted(
         list(filter(lambda x: "Start of" in x.Varname, symbols)),
         key=lambda x: x.Varname,
+        reverse=True,
     )[0]
     return Map(
         file=filename,
