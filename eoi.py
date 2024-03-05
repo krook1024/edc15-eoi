@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from maps import soi, selector, durations
 from edcmap import Map
+from mapfinder import get_eoi_maps, list_codeblocks
+from utils import get_actual_duration, get_eoi
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,55 +12,25 @@ import argparse
 pd.options.display.float_format = "{:,.2f}".format
 
 
-def select_duration_at(current_soi):
-    line = np.array(selector.lines).flatten().tolist()
-
-    if current_soi > selector.x[0]:
-        return int(line[0]), int(line[0])
-
-    if current_soi < selector.x[-1]:
-        return int(line[-1]), int(line[-1])
-
-    for i in range(1, len(selector.x)):
-        if current_soi > selector.x[i]:
-            return int(line[i - 1]), int(line[i])
-
-
-def get_actual_duration(soi_map):
-    duration_lines = []
-    n_lines = []
-
-    for i in range(len(soi_map.x)):
-        actual_duration_line = []
-        duration_n_line = []
-        curr_rpm = soi_map.x[i]
-        for j in range(len(soi_map.y)):
-            curr_iq = soi_map.y[j]
-            curr_soi = soi_map.lines[i][j]
-            one_dura_index, other_dura_index = select_duration_at(curr_soi)
-            curr_dura = (
-                durations[one_dura_index].at(curr_rpm, curr_iq)
-                + durations[other_dura_index].at(curr_rpm, curr_iq)
-            ) / 2
-
-            actual_duration_line.append(curr_dura)
-            duration_n_line.append(one_dura_index)
-
-        duration_lines.append(actual_duration_line)
-        n_lines.append(duration_n_line)
-
-    return duration_lines, n_lines
-
-
-def get_eoi(soi_map, actual_duration_map):
-    eoi_lines = soi_map.np() - actual_duration_map.np()
-    return Map(x=soi_map.x, y=soi_map.y, lines=eoi_lines.tolist())
-
-
 def get_args():
     parser = argparse.ArgumentParser(
         prog="edc15-eoi",
         description="calculates the time of the end of injection event for diesel engines",
+    )
+    parser.add_argument(
+        "-f", "--filename", action="store", help="specify the filename", required=True
+    )
+    parser.add_argument(
+        "-l",
+        "--list-codeblocks",
+        action="store_true",
+        help="show available codeblocks for file",
+    )
+    parser.add_argument(
+        "-c",
+        "--codeblock",
+        action="store",
+        help="select codeblock (show available with -l)",
     )
     parser.add_argument(
         "-p", "--plot", action="store_true", help="show plots of the maps from the file"
@@ -77,11 +48,20 @@ def get_args():
         "-a", "--print-all", action="store_true", help="print all possible information"
     )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if not args.list_codeblocks and not args.codeblock:
+        parser.error('it is necessary to specify codeblock with -c, list available ones by adding -l')
+
+    return args
 
 
 if __name__ == "__main__":
     args = get_args()
+
+    if args.list_codeblocks:
+        list_codeblocks(args.filename)
+        quit(0)
 
     if args.print_all:
         nrows = 3
@@ -94,11 +74,16 @@ if __name__ == "__main__":
     axs = axs.flatten().tolist()
     axc = 0
 
+    maps = get_eoi_maps(args.filename, args.codeblock)
+    selector = maps.selector
+    durations = maps.durations
+    soi = maps.soi
+
     print("SELECTOR")
     print(selector)
     print()
 
-    actual_duration_lines, duration_n_lines = get_actual_duration(soi)
+    actual_duration_lines, duration_n_lines = get_actual_duration(maps)
     actual_duration = Map(x=soi.x, y=soi.y, lines=actual_duration_lines)
     duration_n = Map(x=soi.x, y=soi.y, lines=duration_n_lines)
 
@@ -129,7 +114,7 @@ if __name__ == "__main__":
     axc += 1
     print()
 
-    eoi = get_eoi(soi, actual_duration)
+    eoi = get_eoi(maps, actual_duration)
 
     print("EOI (positive means BTDC)")
     print(eoi)
@@ -138,22 +123,23 @@ if __name__ == "__main__":
     axc += 1
     print()
 
-    target_eoi = Map(
-        file="CURRENT.bin",
-        config={  # EGR map :D
-            "start": 0x718A8,
-            "fun": lambda x: x * -0.023437 + 78,
-            "inv": lambda x: 42.6676 * (78 - x),
-            "x": 0x7186A,
-            "x_fun": lambda x: x,
-            "x_fun_inv": lambda x: x,
-            "y": 0x7188E,
-            "y_fun": lambda x: x * 0.01,
-            "y_fun_inv": lambda x: x * 100,
-        },
-        x=eoi.x,
-        y=eoi.y,
-    )
+    # TODO: rewrite target to be text based
+    # target_eoi = Map(
+    #    file="CURRENT.bin",
+    #    config={  # EGR map :D
+    #        "start": 0x718A8,
+    #        "fun": lambda x: x * -0.023437 + 78,
+    #        "inv": lambda x: 42.6676 * (78 - x),
+    #        "x": 0x7186A,
+    #        "x_fun": lambda x: x,
+    #        "x_fun_inv": lambda x: x,
+    #        "y": 0x7188E,
+    #        "y_fun": lambda x: x * 0.01,
+    #        "y_fun_inv": lambda x: x * 100,
+    #    },
+    #    x=eoi.x,
+    #    y=eoi.y,
+    # )
 
     if args.init:
         target_eoi.lines = eoi.lines
@@ -181,7 +167,7 @@ if __name__ == "__main__":
         )
         print(new_eoi)
         print()
-        
+
         if args.print_all:
             print("NEW ACTUAL DURATION")
             print(Map(x=soi.x, y=soi.y, lines=new_actual_duration_lines))
@@ -202,7 +188,6 @@ if __name__ == "__main__":
             lines = np.array(new_actual_duration_lines) - actual_duration.np()
             print(Map(x=soi.x, y=soi.y, lines=lines))
             print()
-
 
     if args.plot:
         for i in range(1, len(axs) - 1):

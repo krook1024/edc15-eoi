@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ecutypes>
+  <ecutype>
+    <software>0123456</software>
+    <name>EDC17CP14</name>
+    <make>Bosch</make>
+    <partnumbers>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+    </partnumbers>
+  </ecutype>
+  <ecutype>
+    <name>EDC17CP20</name>
+    <make>Bosch</make>
+    <partnumbers>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+    </partnumbers>
+  </ecutype>
+  <ecutype>
+    <software>DYRX</software>
+    <name>HDRC</name>
+    <make>Delco</make>
+    <partnumbers>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+      <partnumber>0123456789</partnumber>
+    </partnumbers>
+  </ecutype>
+</ecutypes>
