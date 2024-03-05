@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from edcmap import Map
-from mapfinder import get_maps
+from mapfinder import get_eoi_maps, list_codeblocks
 from utils import get_actual_duration, get_eoi
 
 import matplotlib.pyplot as plt
@@ -18,14 +18,19 @@ def get_args():
         description="calculates the time of the end of injection event for diesel engines",
     )
     parser.add_argument(
+        "-f", "--filename", action="store", help="specify the filename", required=True
+    )
+    parser.add_argument(
+        "-l",
+        "--list-codeblocks",
+        action="store_true",
+        help="show available codeblocks for file",
+    )
+    parser.add_argument(
         "-c",
         "--codeblock",
         action="store",
         help="select codeblock (show available with -l)",
-        required=True,
-    )
-    parser.add_argument(
-        "-f", "--filename", action="store", help="specify the filename", required=True
     )
     parser.add_argument(
         "-p", "--plot", action="store_true", help="show plots of the maps from the file"
@@ -43,11 +48,20 @@ def get_args():
         "-a", "--print-all", action="store_true", help="print all possible information"
     )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    if not args.list_codeblocks and not args.codeblock:
+        parser.error('it is necessary to specify codeblock with -c, list available ones by adding -l')
+
+    return args
 
 
 if __name__ == "__main__":
     args = get_args()
+
+    if args.list_codeblocks:
+        list_codeblocks(args.filename)
+        quit(0)
 
     if args.print_all:
         nrows = 3
@@ -60,7 +74,7 @@ if __name__ == "__main__":
     axs = axs.flatten().tolist()
     axc = 0
 
-    maps = get_maps(args.filename, args.codeblock)
+    maps = get_eoi_maps(args.filename, args.codeblock)
     selector = maps.selector
     durations = maps.durations
     soi = maps.soi
@@ -110,22 +124,22 @@ if __name__ == "__main__":
     print()
 
     # TODO: rewrite target to be text based
-    target_eoi = Map(
-        file="CURRENT.bin",
-        config={  # EGR map :D
-            "start": 0x718A8,
-            "fun": lambda x: x * -0.023437 + 78,
-            "inv": lambda x: 42.6676 * (78 - x),
-            "x": 0x7186A,
-            "x_fun": lambda x: x,
-            "x_fun_inv": lambda x: x,
-            "y": 0x7188E,
-            "y_fun": lambda x: x * 0.01,
-            "y_fun_inv": lambda x: x * 100,
-        },
-        x=eoi.x,
-        y=eoi.y,
-    )
+    # target_eoi = Map(
+    #    file="CURRENT.bin",
+    #    config={  # EGR map :D
+    #        "start": 0x718A8,
+    #        "fun": lambda x: x * -0.023437 + 78,
+    #        "inv": lambda x: 42.6676 * (78 - x),
+    #        "x": 0x7186A,
+    #        "x_fun": lambda x: x,
+    #        "x_fun_inv": lambda x: x,
+    #        "y": 0x7188E,
+    #        "y_fun": lambda x: x * 0.01,
+    #        "y_fun_inv": lambda x: x * 100,
+    #    },
+    #    x=eoi.x,
+    #    y=eoi.y,
+    # )
 
     if args.init:
         target_eoi.lines = eoi.lines
