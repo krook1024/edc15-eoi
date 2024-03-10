@@ -92,6 +92,36 @@ def get_eoi_maps(filename: str, cb: int) -> Maps:
     )
 
 
+def get_bip_maps(filename: str, cb: int) -> tuple[Map, Map]:
+    symbols = list(filter(lambda x: "BIP" in x.Varname, parse_symbols(filename, cb)))
+    bip1 = Map(
+        file=filename,
+        config={
+            "start": symbols[0].Flash_start_address,
+            "fun": lambda x: x,
+            "inv": lambda x: x,
+            "x": symbols[0].X_axis_address,
+            "x_fun": lambda x: x * 20.372434017595,
+            "x_fun_inv": lambda x: x * 0.049085936375415,
+        },
+    )
+    bip2 = Map(
+        file=filename,
+        config={
+            "start": symbols[1].Flash_start_address,
+            "fun": lambda x: x / 256,
+            "inv": lambda x: x * 256,
+            "x": symbols[1].X_axis_address,
+            "x_fun": lambda x: x,
+            "x_fun_inv": lambda x: x,
+            "y": symbols[1].Y_axis_address,
+            "y_fun": lambda x: (x * 0.0234375) - 78,
+            "y_fun_inv": lambda x: -42.6667 * (-x - 78),
+        },
+    )
+    return bip1, bip2
+
+
 def get_soi(symbols: list[Symbol], filename: str) -> Map:
     symbol = sorted(
         list(filter(lambda x: "Start of" in x.Varname, symbols)),
@@ -224,7 +254,9 @@ def list_codeblocks(filename: str) -> None:
     print(f"Available codeblocks in {filename}")
 
     _, cbs, _ = get_parser(filename).parseFile(
-        filename, List[EDCSuiteBaseLibrary.CodeBlock](), List[EDCSuiteBaseLibrary.AxisHelper]()
+        filename,
+        List[EDCSuiteBaseLibrary.CodeBlock](),
+        List[EDCSuiteBaseLibrary.AxisHelper](),
     )
     blocks = [
         [

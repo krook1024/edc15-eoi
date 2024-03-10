@@ -118,7 +118,12 @@ class Map:
     def __str__(self):
         return str(self.df())
 
-    def at(self, x, y):
+    def atX(self, x):  # for 2d
+        X = np.array(self.x).flatten()
+        Z = np.array(self.lines).flatten()
+        return np.interp(x, X, Z)
+
+    def at(self, x, y):  # for 3d
         X = np.array(self.x).flatten()
         Y = np.array(self.y).flatten()
         Z = self.np()
