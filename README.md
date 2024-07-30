@@ -23,7 +23,7 @@ Run the following commands to get started quickly:
 git clone https://github.com/krook1024/edc15-eoi.git
 cd edc15-eoi
 python -m pip install -r requirements.txt
-py ./eoi.p -h
+py ./eoi.py -h
 ```
 
 ### Listing available codeblocks
@@ -58,6 +58,6 @@ py eoi.py -f current.bin -c 2 -p
 
 ### Notes
 
-- You can run `py eoi.p -h` to print the documentation of each argument.
+- You can run `py eoi.py -h` to print the documentation of each argument.
 - The order of the arguments don't matter, as long as all required arguments
   are set.
