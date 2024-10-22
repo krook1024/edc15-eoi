@@ -122,7 +122,7 @@ def get_bip_maps(filename: str, cb: int) -> tuple[Map, Map]:
     return bip1, bip2
 
 
-def get_soi(symbols: list[Symbol], filename: str, soi_map_number: int = 8) -> Map:
+def get_soi(symbols: list[Symbol], filename: str, soi_map_number: int = 9) -> Map:
     symbol = sorted(
         list(filter(lambda x: "Start of" in x.Varname, symbols)),
         key=lambda x: x.Varname
