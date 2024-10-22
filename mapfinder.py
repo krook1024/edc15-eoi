@@ -123,10 +123,14 @@ def get_bip_maps(filename: str, cb: int) -> tuple[Map, Map]:
 
 
 def get_soi(symbols: list[Symbol], filename: str, soi_map_number: int = 9) -> Map:
-    symbol = sorted(
+    symbols = sorted(
         list(filter(lambda x: "Start of" in x.Varname, symbols)),
         key=lambda x: x.Varname
-    )[soi_map_number]
+    )
+    if len(symbols) > soi_map_number:
+        symbol = symbols[soi_map_number]
+    else:
+        symbol = symbols[len(symbols) - 1]
     return Map(
         file=filename,
         config={
