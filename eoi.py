@@ -36,6 +36,9 @@ def get_args():
         "-p", "--plot", action="store_true", help="show plots of the maps from the file"
     )
     parser.add_argument(
+        "-s", "--soi-map", action="store", help="select a specific SOI map for calculation", default=9
+    )
+    parser.add_argument(
         "-i",
         "--init",
         action="store_true",
@@ -51,7 +54,9 @@ def get_args():
     args = parser.parse_args()
 
     if not args.list_codeblocks and not args.codeblock:
-        parser.error('it is necessary to specify codeblock with -c, list available ones by adding -l')
+        parser.error(
+            "it is necessary to specify codeblock with -c, list available ones by adding -l"
+        )
 
     return args
 
@@ -74,7 +79,7 @@ if __name__ == "__main__":
     axs = axs.flatten().tolist()
     axc = 0
 
-    maps = get_eoi_maps(args.filename, args.codeblock)
+    maps = get_eoi_maps(args.filename, args.codeblock, int(args.soi_map))
     selector = maps.selector
     durations = maps.durations
     soi = maps.soi

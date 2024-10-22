@@ -82,11 +82,11 @@ def parse_symbols(filename: str, cb: int) -> list[Symbol]:
     ]
 
 
-def get_eoi_maps(filename: str, cb: int) -> Maps:
+def get_eoi_maps(filename: str, cb: int, soi_map_number: int) -> Maps:
     symbols = parse_symbols(filename, cb)
 
     return Maps(
-        get_soi(symbols, filename),
+        get_soi(symbols, filename, soi_map_number),
         get_selector(symbols, filename),
         get_durations(symbols, filename),
     )
@@ -122,12 +122,11 @@ def get_bip_maps(filename: str, cb: int) -> tuple[Map, Map]:
     return bip1, bip2
 
 
-def get_soi(symbols: list[Symbol], filename: str) -> Map:
+def get_soi(symbols: list[Symbol], filename: str, soi_map_number: int = 8) -> Map:
     symbol = sorted(
         list(filter(lambda x: "Start of" in x.Varname, symbols)),
-        key=lambda x: x.Varname,
-        reverse=True,
-    )[0]
+        key=lambda x: x.Varname
+    )[soi_map_number]
     return Map(
         file=filename,
         config={
