@@ -169,7 +169,7 @@ def get_selector(symbols: list[Symbol], filename: str) -> Map:
             "start": symbol.Flash_start_address,
             "fun": lambda x: round(x / 256, 0),
             "x": symbol.X_axis_address,
-            "x_fun": lambda x: round(x * -0.023437 + 78),
+            "x_fun": lambda x: round(x * -0.023437 + 78, 2),
         },
     )
 

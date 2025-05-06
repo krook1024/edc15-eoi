@@ -36,9 +36,9 @@ def get_actual_duration(maps):
 
             actual_duration_line.append(curr_dura)
             if one_dura_index == other_dura_index:
-                duration_n_line.append(f'{one_dura_index}')
+                duration_n_line.append(f"{one_dura_index}")
             else:
-                duration_n_line.append(f'{one_dura_index},{other_dura_index}')
+                duration_n_line.append(f"{one_dura_index},{other_dura_index}")
 
         duration_lines.append(actual_duration_line)
         n_lines.append(duration_n_line)
