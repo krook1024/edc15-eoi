@@ -70,7 +70,6 @@ def get_actual_duration_with_dura_1_axes(maps):
 
     return duration_lines
 
-
 def get_eoi(maps, actual_duration_map):
     eoi_lines = maps.soi.np() - actual_duration_map.np()
     return Map(x=maps.soi.x, y=maps.soi.y, lines=eoi_lines.tolist())
