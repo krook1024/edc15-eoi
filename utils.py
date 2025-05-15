@@ -45,6 +45,31 @@ def get_actual_duration(maps):
 
     return duration_lines, n_lines
 
+def get_actual_duration_with_dura_1_axes(maps):
+    duration_lines = []
+
+    dura1 = maps.durations[1]
+
+    for i in range(len(dura1.y)):
+        curr_rpm = dura1.y[i]
+        actual_duration_line = []
+
+        for j in range(len(dura1.x)):
+            curr_iq = dura1.x[j]
+            curr_soi = maps.soi.at(curr_iq, curr_rpm)
+
+            one_dura_index, other_dura_index = select_duration_at(curr_soi, maps)
+            curr_dura = (
+                maps.durations[one_dura_index].at(curr_rpm, curr_iq)
+                + maps.durations[other_dura_index].at(curr_rpm, curr_iq)
+            ) / 2
+
+            actual_duration_line.append(curr_dura)
+
+        duration_lines.append(actual_duration_line)
+
+    return duration_lines
+
 
 def get_eoi(maps, actual_duration_map):
     eoi_lines = maps.soi.np() - actual_duration_map.np()

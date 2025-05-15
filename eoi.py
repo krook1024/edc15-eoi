@@ -2,7 +2,7 @@
 
 from edcmap import Map
 from mapfinder import get_eoi_maps, list_codeblocks
-from utils import get_actual_duration, get_eoi
+from utils import get_actual_duration, get_actual_duration_with_dura_1_axes, get_eoi
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -90,6 +90,10 @@ if __name__ == "__main__":
 
     actual_duration_lines, duration_n_lines = get_actual_duration(maps)
     actual_duration = Map(x=soi.x, y=soi.y, lines=actual_duration_lines)
+
+    actual_duration_with_dura_1_axes_lines = get_actual_duration_with_dura_1_axes(maps)
+    actual_duration_with_dura_1_axes = Map(x=durations[1].y, y=durations[1].x, lines=actual_duration_with_dura_1_axes_lines)
+
     duration_n = Map(x=soi.x, y=soi.y, lines=duration_n_lines)
 
     print("SELECTED DURATION MAP")
@@ -117,6 +121,10 @@ if __name__ == "__main__":
     actual_duration.show_graph(axs[axc])
     axs[axc].set_title("ACTUAL DURATION")
     axc += 1
+    print()
+    
+    print("ACTUAL DURATION (Dura 1 axes)")
+    print(actual_duration_with_dura_1_axes)
     print()
 
     eoi = get_eoi(maps, actual_duration)
