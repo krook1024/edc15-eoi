@@ -3,9 +3,7 @@ from struct import pack, unpack
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib import cm
 from scipy.interpolate import RegularGridInterpolator
-
 
 def unp(byte):
     return unpack("<h", byte)[0]
