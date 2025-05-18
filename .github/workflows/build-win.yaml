@@ -2,6 +2,8 @@ name: Build for Windows
 on: [push]
 jobs: 
     Build-for-Windows:
+        permissions:
+          contents: write
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v4
@@ -21,3 +23,5 @@ jobs:
             - uses: ncipollo/release-action@v1
               with:
                 artifacts: "eoi.zip"
+                commit: ${{ github.sha }}
+                tag: ${{ github.sha }}
