@@ -15,6 +15,9 @@ jobs:
             - name: Archive artifacts
               uses: actions/upload-artifact@v4
               with:
-                name: dist-without-markdown
+                name: eoi
                 path: |
                     dist/eoi
+            - uses: ncipollo/release-action@v1
+              with:
+                artifacts: "eoi.zip"
