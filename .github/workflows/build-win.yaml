@@ -20,8 +20,3 @@ jobs:
                 name: eoi
                 path: |
                     dist/eoi
-            - uses: ncipollo/release-action@v1
-              with:
-                artifacts: "eoi.zip"
-                commit: ${{ github.sha }}
-                tag: ${{ github.sha }}
