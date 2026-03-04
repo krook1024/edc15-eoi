@@ -5,25 +5,55 @@ End of Injection event in PD TDI engines.
 
 ![Screenshot of the application](./doc/screenshot.png)
 
-## Getting started
+## Installation & Running
 
-1. Download & install the latest version of Python from:
-   https://www.python.org/downloads/
-2. Download this repository as a zip and open
-   a console window in that directory
-3. Run `pip install -r requirements.txt` to
-   install the dependencies
-4. Run `py eoi.py` to test if the program's working
+This project uses [uv](https://github.com/astral-sh/uv) for dependency and environment management. It is the recommended way to run this project as it handles Python version installation and isolation automatically.
 
-## Usage
+### 1. Install uv
 
-Run the following commands to get started quickly:
-
+**macOS / Linux:**
+```sh
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
+
+**Windows (PowerShell):**
+```powershell
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+### 2. Clone the repository
+
+```sh
 git clone https://github.com/krook1024/edc15-eoi.git
 cd edc15-eoi
-python -m pip install -r requirements.txt
-py ./eoi.py -h
+```
+
+### 3. Create a virtual environment and install dependencies
+
+```sh
+uv python install        # installs the pinned Python version from .python-version
+uv venv                  # creates an isolated .venv environment
+```
+
+**macOS / Linux:**
+```sh
+source .venv/bin/activate
+```
+
+**Windows (PowerShell):**
+```powershell
+.venv\Scripts\activate
+```
+
+Then install dependencies:
+```sh
+uv pip install -r requirements.txt
+```
+
+### 4. Run the tool
+
+```sh
+py eoi.py -h
 ```
 
 ### Listing available codeblocks
